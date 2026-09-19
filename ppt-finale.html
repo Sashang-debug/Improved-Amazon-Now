@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Amazon Now — Grand Finale · HackOn S6.0 (Winning Cut)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Amazon+Ember&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fafafa;--navy:#fafafa;--navy2:#f0f0f0;--panel:#ffffff;--panel2:#f4f4f4;
+    --ink:#0f0f0f;--mut:#404040;--mut2:#8f8f8f;
+    --orange:#ff9900;--orange-l:#ffb84d;--orange-d:#b35900;
+    --teal:#0a9396;--teal-d:#086f70;--violet:#6d28d9;--blue:#2563eb;
+    --line:rgba(0,0,0,.08);--line2:rgba(0,0,0,.05);
+    --good:#059669;--bad:#dc2626;--warn:#d97706;
+    --shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px -2px rgba(0,0,0,.06),0 16px 32px -8px rgba(0,0,0,.08);
+    --shadow-lg:0 2px 4px rgba(0,0,0,.04),0 12px 24px -4px rgba(0,0,0,.08),0 32px 64px -16px rgba(0,0,0,.10);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.05);
+    --shadow-glow:0 0 0 1px rgba(255,153,0,.12),0 4px 16px -2px rgba(255,153,0,.10),0 16px 40px -8px rgba(255,153,0,.12);
+    --fz:clamp(15px,1.5vw,21px);--r:14px;--r-sm:10px;--r-lg:18px;
+    --ff:"Inter","Amazon Ember","Segoe UI",Roboto,Helvetica,Arial,system-ui,sans-serif;
+    --mono:"JetBrains Mono","SF Mono",ui-monospace,Consolas,monospace;
+    --sp:clamp(14px,1.6vh,22px);--sp-sm:10px;--sp-lg:clamp(22px,2.2vh,32px);
+    --ease:cubic-bezier(.2,.7,.2,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#eee;color:var(--ink);font-family:var(--ff);font-size:var(--fz);line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-feature-settings:"cv11","ss01","ss03"}
+
+  #deck{position:fixed;inset:0}
+  #deck::after{content:"";position:absolute;inset:0;background-image:url('hackon-logo.png');background-size:40%;background-position:center;background-repeat:no-repeat;opacity:0.04;pointer-events:none;z-index:9999}
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;
+    padding:clamp(26px,3.8vh,52px) clamp(36px,5.5vw,108px) 52px;
+    background:
+      radial-gradient(1200px 700px at 94% -12%, rgba(255,153,0,.06), transparent 58%),
+      radial-gradient(1000px 650px at -8% 112%, rgba(10,147,150,.05), transparent 56%),
+      #fafafa;
+    animation:slideIn .5s var(--ease);overflow:hidden;
+  }
+  .slide::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;background-image:linear-gradient(rgba(0,0,0,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.018) 1px,transparent 1px);background-size:40px 40px}
+  .slide.active{display:flex}
+  .slide > *{position:relative;z-index:1}
+  @keyframes slideIn{from{opacity:0;transform:translateY(8px) scale(.997)}to{opacity:1;transform:none}}
+  @keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @keyframes growW{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+  h1{font-size:clamp(38px,5.4vw,72px);line-height:1.02;font-weight:700;letter-spacing:-.035em}
+  h2{font-size:clamp(24px,3.1vw,38px);font-weight:700;letter-spacing:-.025em;line-height:1.12}
+  h3{font-size:clamp(15px,1.4vw,19px);font-weight:600;letter-spacing:-.012em}
+  .accent{color:var(--orange-d)}.teal{color:var(--teal)}.vio{color:var(--violet)}.blue{color:var(--blue)}.mut{color:var(--mut)}
+  .small{font-size:.78em}.tiny{font-size:.6em}
+  b,strong{font-weight:600}.mono{font-family:var(--mono)}
+  .grad-text{background:linear-gradient(95deg,var(--orange-d),var(--orange) 50%,var(--orange-l));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  .kicker{display:inline-flex;align-items:center;gap:.5em;font-size:.6em;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--orange-d);border:1px solid rgba(255,153,0,.22);background:rgba(255,153,0,.05);padding:.45em .9em;border-radius:999px;margin-bottom:.15em;white-space:nowrap}
+  .kicker.teal{color:var(--teal-d);border-color:rgba(10,147,150,.25);background:rgba(10,147,150,.06)}
+  .kicker.vio{color:var(--violet);border-color:rgba(109,40,217,.25);background:rgba(109,40,217,.06)}
+  .kicker .num{font-family:var(--mono);opacity:.8;font-weight:600}
+  .slide-head{display:flex;flex-direction:column;gap:.5rem;margin-bottom:clamp(1rem,1.8vh,1.6rem)}
+  .lead{color:var(--mut);max-width:60ch;font-size:1em;line-height:1.52;letter-spacing:-.005em}
+
+  /* LAYOUT — center by default, stretch grids */
+  .grow{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+  .row{display:flex;gap:clamp(16px,2vw,30px)}
+  .col{display:flex;flex-direction:column;gap:clamp(14px,1.8vh,22px)}
+  .center{align-items:center;justify-content:center}
+  .wrap{flex-wrap:wrap}
+  /* grids: stretch items + fill full height */
+  .two,.three,.quad{align-items:stretch}
+  .grow.two,.grow.three,.grow.quad{grid-auto-rows:1fr;align-content:stretch}
+  .two>*,.three>*,.quad>*{display:flex;flex-direction:column}
+  .two>.card,.three>.card,.quad>.card,.two>.stat,.three>.stat,.quad>.stat,.two>.pillar,.three>.pillar{height:100%}
+  /* cols fill cell height; cards inside grow to share space evenly */
+  .grow .col{height:100%}
+  .grow .col>.card,.grow .col>.card.soft{flex:1;display:flex;flex-direction:column;justify-content:center}
+  /* direct card children of grid: distribute content */
+  .grow.two>.card,.grow.three>.card{justify-content:flex-start}
+  /* Impact cards: title + stat at top, list fills the rest */
+  .grow.three>.card>.stat{flex:0 0 auto}
+  .grow.three>.card>ul.clean{flex:1;display:flex;flex-direction:column;justify-content:flex-start}
+  .stagger>*{animation:pop .5s var(--ease) both}
+  .stagger>*:nth-child(1){animation-delay:.03s}.stagger>*:nth-child(2){animation-delay:.08s}.stagger>*:nth-child(3){animation-delay:.13s}.stagger>*:nth-child(4){animation-delay:.18s}.stagger>*:nth-child(5){animation-delay:.23s}.stagger>*:nth-child(6){animation-delay:.28s}.stagger>*:nth-child(7){animation-delay:.33s}.stagger>*:nth-child(8){animation-delay:.38s}.stagger>*:nth-child(9){animation-delay:.43s}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:clamp(16px,1.5vw,24px);box-shadow:var(--shadow);position:relative;transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease)}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.card.soft{box-shadow:var(--shadow-sm);background:#fff;border-color:var(--line2)}
+.card.soft:hover{box-shadow:var(--shadow);border-color:var(--line)}
+.card.glow{border-color:rgba(255,153,0,.3);background:#fff;box-shadow:var(--shadow-glow)}
+.card.glow:hover{box-shadow:0 0 0 1px rgba(255,153,0,.18),0 8px 24px -4px rgba(255,153,0,.14),0 24px 56px -12px rgba(255,153,0,.16)}
+  .card .ttl{display:flex;align-items:center;gap:.55em;font-weight:600;margin-bottom:.7em;font-size:.98em;letter-spacing:-.01em}
+  .card .ttl.t-teal{color:var(--teal-d)}.card .ttl.t-vio{color:var(--violet)}
+  .glyph{width:2em;height:2em;flex:0 0 auto;border-radius:var(--r-sm);display:grid;place-items:center;font-size:.85em;background:rgba(255,153,0,.1);color:var(--orange-d);border:1px solid rgba(255,153,0,.18)}
+.glyph.teal{background:rgba(10,147,150,.1);color:var(--teal-d);border-color:rgba(10,147,150,.2)}
+.glyph.vio{background:rgba(109,40,217,.1);color:var(--violet);border-color:rgba(109,40,217,.2)}
+
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);padding:clamp(14px,1.4vw,20px);flex:1;min-width:130px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow-sm);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.stat::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,153,0,.035),transparent 50%);pointer-events:none}
+  .stat .n{font-size:clamp(26px,3.1vw,42px);font-weight:700;line-height:.95;color:var(--orange-d);letter-spacing:-.03em}
+  .stat .n.teal{color:var(--teal-d)}.stat .n.vio{color:var(--violet)}
+  .stat .l{color:var(--mut);font-size:.74em;margin-top:.55em;line-height:1.38;letter-spacing:-.005em}
+
+  .todo{border-color:rgba(220,38,38,.25)!important;position:relative}
+  .todo::after{content:"verify";position:absolute;top:7px;right:9px;font-size:8px;letter-spacing:.06em;color:var(--bad);opacity:.7;font-weight:700;text-transform:uppercase}
+
+  .chip{display:inline-flex;align-items:center;gap:.4em;background:#fff;border:1px solid var(--line);border-radius:999px;padding:.38em .82em;font-size:.76em;color:var(--mut);box-shadow:var(--shadow-sm);transition:all .25s var(--ease);font-weight:500;letter-spacing:-.005em}
+  .chip:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+  .chip.on{background:rgba(255,153,0,.1);border-color:rgba(255,153,0,.35);color:var(--orange-d);font-weight:600}
+.chip.teal{background:rgba(10,147,150,.08);border-color:rgba(10,147,150,.28);color:var(--teal-d);font-weight:500}
+.chip.vio{background:rgba(109,40,217,.08);border-color:rgba(109,40,217,.28);color:var(--violet);font-weight:500}
+
+  .foot{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;padding:11px clamp(36px,5.5vw,108px);font-size:11px;color:var(--mut2);pointer-events:none;z-index:20;letter-spacing:-.005em}
+  .foot .brand{font-weight:700;color:var(--mut);font-size:1.8em}.foot .brand .accent{color:var(--orange-d)}
+  .progress{position:absolute;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--orange),#ffce80,var(--teal));width:0;transition:width .4s var(--ease);z-index:30}
+  .dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:30;pointer-events:auto}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.18);cursor:pointer;transition:.25s var(--ease);border:none;padding:0}
+.dot:hover{background:rgba(0,0,0,.35)}.dot.on{background:var(--orange);width:18px;border-radius:5px}
+  .nav-hint{position:absolute;bottom:16px;right:24px;font-size:13px;color:var(--mut);z-index:30;letter-spacing:.06em;font-family:var(--mono);font-weight:700;background:rgba(255,255,255,0.8);padding:6px 14px;border-radius:24px;box-shadow:var(--shadow-sm);border:1px solid var(--line);backdrop-filter:blur(6px)}
+  .rail{position:absolute;left:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:25;padding-left:12px}
+  .rail i{display:block;width:3px;height:16px;border-radius:3px;background:rgba(0,0,0,.1);transition:.25s var(--ease)}.rail i.on{background:var(--orange);height:24px}
+
+  table{border-collapse:collapse;width:100%;font-size:.8em}
+  th,td{text-align:left;padding:.5em .7em;border-bottom:1px solid var(--line2)}
+  th{color:var(--mut);font-weight:600;font-size:.76em;text-transform:uppercase;letter-spacing:.05em}
+  tr td:first-child{font-weight:600}tr:hover td{background:#f7f9fc}
+  tr:last-child td{border-bottom:none}
+  .method{display:inline-block;min-width:46px;text-align:center;font-size:.7em;font-weight:700;border-radius:6px;padding:.2em .5em;font-family:var(--mono)}
+  .get{background:rgba(10,147,150,.14);color:var(--teal)}.post{background:rgba(255,153,0,.14);color:var(--orange-d)}
+
+  .pipe{display:flex;align-items:stretch;gap:5px;flex-wrap:wrap}
+  .step{flex:1;min-width:110px;position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);padding:13px 12px 11px;box-shadow:var(--shadow-sm);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+  .step:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .step .si{font-size:.58em;color:var(--orange-d);font-weight:700;letter-spacing:.1em;font-family:var(--mono)}
+  .step .sn{position:absolute;top:-9px;left:10px;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--orange);color:var(--orange-d);font-size:.62em;font-weight:700;display:grid;place-items:center;font-family:var(--mono)}
+  .step .st{font-weight:700;font-size:.88em;margin-top:3px;letter-spacing:-.01em}.step .sd{color:var(--mut);font-size:.68em;margin-top:4px;line-height:1.32}
+  .step.llm{border-color:rgba(255,153,0,.35);background:#fffaf2}.step.det{border-color:rgba(10,147,150,.28)}.step.det .si{color:var(--teal-d)}.step.det .sn{border-color:var(--teal);color:var(--teal-d)}
+  .legend{display:flex;gap:18px;font-size:.72em;color:var(--mut);margin-top:6px}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .splitbar{display:flex;height:28px;border-radius:8px;overflow:hidden;border:1px solid var(--line);margin-top:8px}
+  .splitbar .seg{display:grid;place-items:center;font-size:.64em;font-weight:700;color:#fff;font-family:var(--mono)}.splitbar .seg.llm{background:var(--orange)}.splitbar .seg.det{background:var(--teal)}
+
+  .arch{display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center}
+.node{background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);padding:11px 13px;text-align:center;min-width:112px;box-shadow:var(--shadow-sm);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.node:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.node .nt{font-weight:700;font-size:.82em;letter-spacing:-.01em}.node .ns{color:var(--mut);font-size:.66em;margin-top:3px}
+.node.aws{border-color:rgba(255,153,0,.35);background:#fffaf2}.node.aws .nt{color:var(--orange-d)}
+  .arrow{color:var(--orange-d);font-size:1.25em;padding:0 7px;opacity:.65}
+  .layer{border:1px dashed rgba(255,153,0,.28);border-radius:var(--r-lg);padding:14px 16px 16px;position:relative;width:100%}
+  .layer .band-tag{position:absolute;top:-10px;left:16px;background:#fafafa;padding:0 8px;font-size:.58em;letter-spacing:.16em;text-transform:uppercase;color:var(--orange-d);font-weight:700;border-radius:4px}
+
+.shot{border-radius:12px;border:1px solid var(--line);overflow:hidden;box-shadow:var(--shadow-lg);background:#fff;position:relative}
+.shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center}
+.shot .cap{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.88));padding:24px 14px 12px;font-size:.72em}.shot .cap b{color:var(--orange-l)}
+  .shot .num{position:absolute;top:10px;left:10px;width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-weight:700;font-size:.72em;display:grid;place-items:center;z-index:2}
+.video-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;height:100%;min-height:320px;border:2px dashed rgba(0,0,0,.12);border-radius:var(--r-lg);background:#fff;box-shadow:var(--shadow);transition:border-color .3s var(--ease)}
+.video-ph:hover{border-color:rgba(255,153,0,.3)}
+.video-ph .play-btn{width:84px;height:84px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center;font-size:2em;box-shadow:0 0 0 8px rgba(255,153,0,.14),0 8px 24px rgba(255,153,0,.32);transition:transform .3s var(--ease);cursor:pointer}
+.video-ph .play-btn:hover{transform:scale(1.05)}
+  .video-ph .ph-label{font-weight:700;font-size:1.1em;color:var(--ink);letter-spacing:-.01em}
+
+  .ba{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:stretch}
+  .ba .col-card{border-radius:var(--r);padding:22px;border:1px solid var(--line);box-shadow:var(--shadow-sm)}
+  .ba .before{background:#fef6f6;border-color:rgba(220,38,38,.18)}.ba .after{background:#f0fdf4;border-color:rgba(5,150,105,.18)}
+  .ba h3{margin-bottom:.65em;letter-spacing:-.01em}.ba ul{list-style:none;display:flex;flex-direction:column;gap:.5em}.ba li{display:flex;gap:.5em;font-size:.86em;align-items:flex-start;line-height:1.45}
+  .ba .before li::before{content:"✕";color:var(--bad);font-weight:700;flex:0 0 auto}.ba .after li::before{content:"✓";color:var(--good);font-weight:700;flex:0 0 auto}
+  .vs{display:grid;place-items:center;font-weight:700;color:var(--mut2);font-size:.85em}
+
+  .lp{display:flex;gap:16px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line2);transition:padding .3s var(--ease)}
+  .lp:last-child{border-bottom:none}
+  .lp .name{flex:0 0 28%;font-weight:700;color:var(--orange-d);display:flex;align-items:center;gap:.45em;font-size:.92em;letter-spacing:-.01em}.lp .name.t{color:var(--teal-d)}.lp .body{color:var(--mut);font-size:.86em;line-height:1.48;letter-spacing:-.005em}
+
+  .road{display:flex;align-items:flex-start;gap:0;position:relative;margin-top:10px}
+  .mile{flex:1;text-align:center;position:relative;padding-top:32px}
+  .mile::before{content:"";position:absolute;top:12px;left:0;right:0;height:2px;background:rgba(0,0,0,.08)}
+  .mile:last-child::before{right:50%}
+  .mile .dotm{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--orange);transition:transform .3s var(--ease)}
+  .mile:hover .dotm{transform:translateX(-50%) scale(1.15)}
+  .mile.now .dotm{background:var(--orange);box-shadow:0 0 0 5px rgba(255,153,0,.16)}
+  .mile .when{font-size:.62em;color:var(--orange-d);font-weight:700;letter-spacing:.08em}.mile h3{font-size:.88em;margin:.3em .4em;letter-spacing:-.01em}.mile p{font-size:.7em;color:var(--mut);padding:0 .5em;line-height:1.38}
+
+  ul.clean{list-style:none;display:flex;flex-direction:column;gap:.5em}
+  ul.clean li{display:flex;gap:.55em;align-items:flex-start;font-size:.86em;line-height:1.48;letter-spacing:-.005em}ul.clean li::before{content:"▸";color:var(--orange-d);font-weight:700;flex:0 0 auto}ul.clean li b{color:var(--ink);font-weight:600}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,1.8vw,26px)}
+  .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(12px,1.5vw,20px)}
+  .quad{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.5vw,20px)}
+
+  .persona{display:flex;gap:18px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 22px;box-shadow:var(--shadow)}
+  .persona .av{flex:0 0 auto;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#ffbf66);display:grid;place-items:center;color:#fff;font-weight:700;font-size:1.3em}
+  .persona .pq{color:var(--mut);font-size:.92em;font-style:italic}.persona .pq b{color:var(--ink);font-style:normal}
+
+  .tl{position:relative;height:46px;margin:6px 0}
+  .tl .bar{position:absolute;left:0;right:0;top:18px;height:10px;border-radius:6px;background:#fdecec;overflow:hidden}
+  .tl .bar .fill{position:absolute;inset:0;background:linear-gradient(90deg,rgba(220,38,38,.5),rgba(220,38,38,.85));transform-origin:left;animation:growW 1.2s .2s ease both}
+  .tl .ticks{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between}.tl .ticks span{font-size:.62em;color:var(--mut);font-family:var(--mono);text-align:center;width:0}
+  .tl .now{position:absolute;right:0;top:14px;width:3px;height:14px;background:var(--teal)}.tl .nowlbl{position:absolute;right:-2px;top:30px;font-size:.66em;color:var(--teal);font-weight:700;font-family:var(--mono)}
+
+  .cmp{font-size:.8em}.cmp th,.cmp td{padding:.48em .55em}
+  .cmp .yes{color:var(--good);font-weight:700}.cmp .no{color:var(--bad);font-weight:700}.cmp .partial{color:var(--orange);font-weight:700}
+  .cmp tr:last-child td{border-bottom:none}
+
+  .pillar{text-align:center;padding:18px 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:#fff;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow-sm);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+  .pillar:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .pillar .pi{font-size:1.6em;margin-bottom:4px}.pillar h3{margin-bottom:4px;letter-spacing:-.01em}.pillar p{color:var(--mut);font-size:.76em;line-height:1.4}
+
+  .water{display:flex;flex-direction:column;gap:6px;font-size:.78em}
+  .wrow{display:grid;grid-template-columns:155px 1fr 65px;align-items:center;gap:9px}
+  .wrow .wlbl{color:var(--mut);font-size:.9em;letter-spacing:-.005em}
+  .wrow .wbar{height:16px;border-radius:4px;position:relative;overflow:hidden;background:#f0f0f0}
+  .wrow .wbar .fill{position:absolute;top:0;bottom:0;border-radius:4px;transform-origin:left;animation:growW .9s var(--ease) both}
+  .wrow .wbar .fill.llm{background:linear-gradient(90deg,var(--orange),var(--orange-l))}.wrow .wbar .fill.det{background:linear-gradient(90deg,var(--teal),#7ee7da)}.wrow .wbar .fill.io{background:linear-gradient(90deg,var(--blue),#9ab9f5)}
+  .wrow .wms{font-family:var(--mono);font-size:.88em;text-align:right;color:var(--ink);font-weight:500}
+  .wrow.total{border-top:1px solid var(--line);padding-top:6px;margin-top:2px}.wrow.total .wlbl{color:var(--ink);font-weight:700}.wrow.total .wms{color:var(--ink);font-weight:700}
+  .wscale{display:grid;grid-template-columns:155px 1fr 65px;gap:9px;font-size:.6em;color:var(--mut2);font-family:var(--mono);margin-bottom:2px}.wscale .axis{display:flex;justify-content:space-between}
+
+  .risk td:nth-child(2){color:var(--bad)}.risk td:nth-child(3){color:var(--good)}
+  .risk .pill{display:inline-block;font-size:.7em;font-weight:700;padding:.15em .5em;border-radius:5px;font-family:var(--mono)}
+  .risk .pill.h{background:rgba(220,38,38,.12);color:var(--bad)}.risk .pill.m{background:rgba(217,119,6,.12);color:var(--warn)}.risk .pill.l{background:rgba(5,150,105,.12);color:var(--good)}
+
+  .title-wrap{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;height:100%}
+.title-bg{position:absolute;inset:0;z-index:1;opacity:.06;background-size:cover;background-position:center;filter:saturate(.3) brightness(1.5)}
+.title-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(250,250,250,.96) 4%,rgba(250,250,250,.7) 45%,rgba(250,250,250,.15) 85%)}
+  .logo-mark{display:inline-flex;align-items:center;gap:.45em;font-weight:700;font-size:1.02em;letter-spacing:-.015em}
+  .logo-mark .spark{width:1.4em;height:1.4em;border-radius:8px;background:linear-gradient(135deg,var(--orange),#ffbf66);display:grid;place-items:center;color:#fff;font-size:.82em;box-shadow:0 0 0 1px rgba(255,153,0,.18),0 4px 12px rgba(255,153,0,.28)}
+  .team{display:flex;gap:8px;flex-wrap:wrap;margin-top:5px}
+  .members{display:flex;gap:8px;flex-wrap:wrap;margin-top:.7rem}
+  .members .m{display:flex;align-items:center;gap:.45em;background:#fff;border:1px solid var(--line);border-radius:999px;padding:.28em .75em .28em .28em;font-size:.8em;box-shadow:var(--shadow-sm);letter-spacing:-.005em}
+  .members .m .mi{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#7ee7da);display:grid;place-items:center;color:#fff;font-weight:700;font-size:.65em}
+  .qr{width:110px;height:110px;border-radius:var(--r-sm);background:#fff;display:grid;place-items:center;color:#171717;font-size:9px;text-align:center;font-weight:600;border:5px solid #fff;box-shadow:var(--shadow)}
+
+  .notes{position:fixed;left:0;right:0;bottom:0;z-index:40;max-height:36vh;overflow:auto;background:rgba(255,255,255,.97);border-top:1px solid rgba(255,153,0,.2);box-shadow:0 -8px 30px rgba(0,0,0,.06);padding:16px clamp(36px,5.5vw,108px);font-size:12px;color:var(--mut);transform:translateY(110%);transition:transform .3s var(--ease);backdrop-filter:blur(8px);line-height:1.5}
+  .notes.show{transform:none}.notes h4{color:var(--orange-d);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px;font-weight:700}.notes .n-body{max-width:90ch}.notes .n-body b{color:var(--ink);font-weight:600}
+  #overview{position:fixed;inset:0;z-index:60;background:rgba(250,250,250,.97);display:none;padding:36px;overflow:auto}#overview.show{display:block}
+  #overview .ov-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}#overview .ov-head h2{font-size:20px;letter-spacing:-.02em}
+  #overview .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+  #overview .cell{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);padding:13px;cursor:pointer;transition:.2s var(--ease);min-height:110px;display:flex;flex-direction:column;justify-content:space-between}#overview .cell:hover{border-color:var(--orange);transform:translateY(-2px);box-shadow:var(--shadow)}
+  #overview .cell .ci{font-size:10px;color:var(--orange-d);font-weight:700;font-family:var(--mono)}#overview .cell .ct{font-weight:700;font-size:13px;margin-top:5px;letter-spacing:-.01em}#overview .cell .cd{font-size:10px;color:var(--mut);margin-top:5px;line-height:1.35}
+  #help{position:fixed;inset:0;z-index:70;background:rgba(250,250,250,.9);display:none;place-items:center}#help.show{display:grid}
+  #help .box{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:28px 32px;max-width:420px;box-shadow:var(--shadow-lg)}#help h3{margin-bottom:12px;letter-spacing:-.02em}
+  #help kbd{display:inline-block;background:#eef1f5;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:2px 7px;font-family:var(--mono);font-size:11px;margin-right:7px;min-width:20px;text-align:center;font-weight:600}
+  #help .row{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--line2);font-size:12px}#help .row span{color:var(--mut)}#help .row:last-child{border:none}
+
+  @media (max-width:880px){.two,.three,.quad,.ba{grid-template-columns:1fr}.vs{display:none}.lp .name{flex-basis:100%}.rail{display:none}.wrow{grid-template-columns:110px 1fr 55px}.wscale{grid-template-columns:110px 1fr 55px}}
+
+  /* Sparse Slide Strategy: Typography & White Space */
+  .sparse .card { padding: clamp(16px, 2vw, 24px); justify-content: center; align-items: center; text-align: center; font-size: 1.05em; box-shadow: var(--shadow); }
+  .sparse .card .ttl { font-size: 1.1em; justify-content: center; margin-bottom: 0.8rem; text-align: center; }
+  .sparse ul.clean { font-size: 1.05em; gap: 0.8rem; display: flex; flex-direction: column; align-items: center; list-style: none; padding: 0; }
+  .sparse .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .sparse .stat { padding: clamp(16px, 2vw, 24px); justify-content: center; align-items: center; text-align: center; }
+  .sparse .stat .n { font-size: clamp(32px, 3.5vw, 48px); margin-bottom: 0.2em; }
+  .sparse .stat .l { font-size: 1em; max-width: 300px; line-height: 1.4; }
+  .sparse p.mut { text-align: center; font-size: 1em; }
+
+</style>
+</head>
+<body>
+<div class="progress" id="prog"></div>
+<div id="deck">
+
+  <!-- 1 · TITLE -->
+  <section class="slide active" data-section="hook">
+    <div class="title-bg" style="background-image:url('assets/shot-home.png')"></div>
+    <div class="title-wrap">
+      <div class="logo-mark mut" style="margin-bottom:1.4rem"><span class="spark">✦</span> <span class="accent">Nova</span></div>
+      <h1>Delivery got instant.<br><span class="grad-text">Shopping didn't.</span><br>We fixed that.</h1>
+      
+      <div class="two" style="margin-top:2rem; max-width: 600px;">
+        <div class="stat"><div class="n" style="font-size:1.8em;">20 min</div><div class="l">Current cart building time</div></div>
+        <div class="stat glow"><div class="n accent" style="font-size:1.8em;">2.4s</div><div class="l">Nova, our conversational AI</div></div>
+      </div>
+
+      <div class="team" style="margin-top:2.5rem">
+        <span class="chip on">HackOn with Amazon · Season 6.0</span>
+        <span class="chip">Team CodeBlooded</span>
+        <span class="chip teal">Theme: Amazon Now</span>
+      </div>
+      <div class="members" style="margin-top:1rem">
+        <span class="m"><span class="mi">01</span> Vishal yadav</span>
+        <span class="m"><span class="mi">02</span> Piyush Agrawal</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · PROBLEM -->
+  <section class="slide" data-section="problem">
+    <div class="slide-head">
+      <span class="kicker"><span class="num">01</span> The Problem · Work Backwards from the Customer</span>
+      <h2>The <span class="accent">30-minute morning</span> nobody talks about</h2>
+    </div>
+    <div class="grow col" style="gap:1.5rem; justify-content:center;">
+      <div class="three stagger">
+        <div class="card glow"><div class="ttl" style="font-size:1.2em"><span class="glyph">⌖</span> Decision fatigue</div><p class="mut small">40 variants per query.</p></div>
+        <div class="card glow"><div class="ttl" style="font-size:1.2em"><span class="glyph">↻</span> Repetitive loop</div><p class="mut small">Search → filter → compare → add.</p></div>
+        <div class="card glow"><div class="ttl" style="font-size:1.2em"><span class="glyph">₹</span> Invisible budget</div><p class="mut small">Overshoots discovered at checkout.</p></div>
+      </div>
+      <div class="row stagger wrap" style="gap:16px; margin-top:1rem;">
+        <div class="stat" style="flex:1;"><div class="n">~70%</div><div class="l">of carts abandoned — friction & decision fatigue are top drivers<sup>1</sup></div></div>
+        <div class="stat" style="flex:1;"><div class="n">8–12</div><div class="l">searches to assemble one urgent multi-item trip<sup>1</sup></div></div>
+        <div class="stat" style="flex:1;"><div class="n">&gt;5 min</div><div class="l">time-to-cart for a 10-item basket on quick-commerce<sup>1</sup></div></div>
+      </div>
+    </div>
+    <p class="tiny mut" style="position:absolute;bottom:40px"><sup>1</sup> Source: RedSeer Strategy Consultants, Quick Commerce in India, 2024</p>
+  </section>
+
+  <!-- 4 · SOLUTION (Moved) -->
+  <section class="slide" data-section="solution">
+    <div class="slide-head">
+      <span class="kicker teal"><span class="num">02</span> The Solution · Invent & Simplify</span>
+      <h2>Meet <span class="accent">Nova</span></h2>
+    </div>
+    <div class="grow col center" style="gap:1rem">
+      <div class="row center wrap" style="width:100%;gap:6px">
+        <div class="col" style="gap:10px;flex:0 0 auto">
+          <div class="card soft" style="padding:10px 14px; font-weight:600;"><span class="glyph">⌨</span> "Breakfast for 4, ₹500"</div>
+          <div class="card soft" style="padding:10px 14px; font-weight:600;"><span class="glyph">🎙</span> Voice intent</div>
+          <div class="card soft" style="padding:10px 14px; font-weight:600;"><span class="glyph">📷</span> Photo of empty fridge</div>
+        </div>
+        <div class="arrow">➜</div>
+        <div class="card glow" style="flex:0 0 auto;text-align:center; padding:16px;">
+          <div style="font-size:2em">✦</div>
+          <div style="font-weight:800;font-size:1.2em; margin-bottom:4px;">Nova</div>
+          <div class="mut small">8-step deterministic<br>orchestration on AWS</div>
+        </div>
+        <div class="arrow">➜</div>
+        <div class="col" style="gap:10px;flex:0 0 auto">
+          <div class="card soft" style="padding:10px 14px; font-weight:600;"><b class="teal">✓ Ready cart</b></div>
+          <div class="card soft" style="padding:10px 14px; font-weight:600;"><b class="teal">✓ Budget-checked</b></div>
+          <div class="card soft" style="padding:10px 14px; font-weight:600;"><b class="teal">✓ Explained</b></div>
+        </div>
+      </div>
+      <div class="three stagger" style="width:100%; margin-top:0.5rem;">
+        <div class="card soft"><div class="ttl"><div class="glyph accent">①</div> Parse Intent</div></div>
+        <div class="card soft"><div class="ttl"><div class="glyph teal">②</div> Decide & Explain</div></div>
+        <div class="card soft"><div class="ttl"><div class="glyph vio">③</div> Guard the Outcome</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · FEATURES (Moved) -->
+  <section class="slide" data-section="features">
+    <div class="slide-head">
+      <span class="kicker"><span class="num">03</span> What It Does · 13 features, 3 tiers</span>
+      <h2>From a sentence to a <span class="accent">smart</span> cart</h2>
+    </div>
+    <div class="grow col" style="gap:1rem">
+      <div class="three stagger">
+        <div class="card"><div class="ttl" style="font-size:1.1em"><span class="glyph">①</span> Core</div><ul class="clean" style="font-size:1.1em"><li><b>Intent-to-Cart</b></li><li><b>Multimodal</b> (text/voice/photo)</li><li><b>Budget rebalancing</b></li><li><b>Recipe Scaling</b></li></ul></div>
+        <div class="card"><div class="ttl" style="font-size:1.1em"><span class="glyph teal">②</span> Predictive</div><ul class="clean" style="font-size:1.1em"><li><b>Proactivity</b> (weather)</li><li><b>Consumption refills</b></li><li><b>Emergency Mode</b></li></ul></div>
+        <div class="card"><div class="ttl" style="font-size:1.1em"><span class="glyph vio">③</span> Enhancers</div><ul class="clean" style="font-size:1.1em"><li><b>Out-of-stock swaps</b></li><li><b>Confidence scores</b></li><li><b>Learns from edits</b></li><li><b>Diet-aware swaps</b></li></ul></div>
+      </div>
+      <div class="card soft" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap; margin-top:1rem;">
+        <span class="chip teal" style="font-size:1em;">♿ Accessibility win</span>
+        <p class="mut" style="margin:0;flex:1;min-width:240px; font-weight:500;">Voice + photo input means elderly & low-literacy shoppers get the same 2.4s outcome natively.</p>
+      </div>
+    </div>
+  </section>
+
+      <!-- 6 · LIVE DEMO -->
+  <section class="slide" data-section="demo">
+    <div class="slide-head" style="margin-bottom:.7rem">
+      <span class="kicker"><span class="num">04</span> Live Demo · this is the real, working product</span>
+      <h2>Watch the <span class="accent">demo video</span> — cart built in ~2.4s</h2>
+    </div>
+    <div class="grow" style="justify-content:center">
+      <div class="video-ph" style="min-height: 400px;">
+        <div class="play-btn" style="transform: scale(1.2);">▶</div>
+        <div class="ph-label" style="font-size: 1.5em; margin-top:1rem;">Demo video placeholder</div>
+        <div class="mut">embed your demo video here</div>
+      </div>
+    </div>
+    <div class="card soft" style="margin-top:.7rem;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <span class="chip on">▶ Run-of-show</span>
+      <p class="mut small" style="margin:0;flex:1;min-width:300px">Live order: <b>photo→cart</b> · <b>"Diwali for 10"→scaled</b> · <b>over-budget→auto-rebalance (₹ saved)</b> · <b>"Cut Finger"→SOS bundle</b>. <span class="tiny">(video fallback cued — network permitting)</span></p>
+    </div>
+  </section>
+
+<!-- 3 · MARKET (Moved) -->
+  <section class="slide" data-section="market">
+    <div class="slide-head">
+      <span class="kicker"><span class="num">05</span> Market & Opportunity</span>
+      <h2>Amazon Now has the infrastructure. <span class="accent">Nobody has the conversation.</span></h2>
+    </div>
+    <div class="grow col" style="gap:1.5rem">
+      <div class="three stagger">
+        <div class="stat" style="position:relative; overflow:hidden;">
+          <svg style="position:absolute; bottom:0; left:0; width:100%; height:60%; opacity:0.1; z-index:0;" viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 40 L0 30 L20 25 L40 32 L60 15 L80 18 L100 5 L100 40 Z" fill="var(--orange-d)"/></svg>
+          <div class="n" style="position:relative; z-index:1;">25% MoM</div><div class="l" style="position:relative; z-index:1;">Amazon Now order growth in India<sup>2</sup></div>
+        </div>
+        <div class="stat" style="position:relative; overflow:hidden;">
+          <svg style="position:absolute; bottom:0; left:0; width:100%; height:60%; opacity:0.1; z-index:0;" viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 40 L0 25 L30 20 L50 10 L80 15 L100 0 L100 40 Z" fill="var(--teal-d)"/></svg>
+          <div class="n teal" style="position:relative; z-index:1;">3×</div><div class="l" style="position:relative; z-index:1;">Prime members' shopping frequency<sup>2</sup></div>
+        </div>
+        <div class="stat" style="position:relative; overflow:hidden;">
+          <svg style="position:absolute; bottom:0; left:0; width:100%; height:60%; opacity:0.1; z-index:0;" viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 40 L0 20 L25 28 L50 12 L75 18 L100 2 L100 40 Z" fill="var(--ink)"/></svg>
+          <div class="n" style="position:relative; z-index:1;">$5–6B</div><div class="l" style="position:relative; z-index:1;">India quick-commerce GMV</div>
+        </div>
+      </div>
+      <div class="two stagger" style="gap:16px">
+        <div class="card glow" style="border-width:2px; padding:20px;">
+          <div class="ttl" style="font-size:1.15em; margin-bottom:1rem;"><span class="glyph">👤</span> Customer Impact</div>
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <span class="chip on" style="font-size:1em;">Time given back</span>
+            <span class="chip on" style="font-size:1em;">Accessibility by design</span>
+            <span class="chip on" style="font-size:1em;">Trust on every line</span>
+            <span class="chip on" style="font-size:1em;">No checkout anxiety</span>
+            <span class="chip on" style="font-size:1em;">Always deliverable</span>
+          </div>
+        </div>
+        <div class="card soft" style="padding:20px;">
+          <div class="ttl t-teal" style="font-size:1.15em; margin-bottom:1rem;"><span class="glyph teal">📈</span> Business Impact</div>
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <span class="chip teal" style="font-size:1em;">↑ Frequency</span>
+            <span class="chip teal" style="font-size:1em;">↑ Conversion</span>
+            <span class="chip teal" style="font-size:1em;">↓ Returns</span>
+            <span class="chip teal" style="font-size:1em;">↑ Basket size</span>
+            <span class="chip teal" style="font-size:1em;">New proactive revenue</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="tiny mut" style="position:absolute;bottom:40px"><sup>2</sup> Amazon Now stats from Andy Jassy's 2025 Letter to Shareholders. Market figures sourced from RedSeer Q-Commerce estimates.</p>
+  </section>
+
+                <!-- 7 · HOW IT WORKS / ARCHITECTURE COMBINED -->
+  <section class="slide" data-section="pipeline">
+    <style>
+      .arch-grid-v5 { 
+         display: grid; 
+         grid-template-columns: auto 30px auto 30px 240px 40px 260px; 
+         gap: 6px; 
+         align-items: start; 
+         justify-content: center;
+         font-family: var(--ff); 
+         font-size: 0.7em; 
+         width: 100%; 
+         max-width: 1050px; 
+         margin: 0 auto; 
+         transform: scale(0.9); 
+         transform-origin: top center; 
+         margin-top: 0px; 
+      }
+      
+      .box-v5 { background: #ffffff; border: 2px solid #e2e8f0; border-radius: 8px; padding: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); color:var(--ink); text-align:center; }
+      
+      .box-deploy { background: #fff7ed; border-color: #fdba74; }
+      .box-front { border-color: #3b82f6; border-top-width: 4px; }
+      .box-back { border-color: #ea580c; border-top-width: 4px; }
+      
+      .box-title { font-weight: 800; margin-bottom:4px; font-size:1.1em; }
+      .box-sub { color: #64748b; font-weight: 500; font-size: 0.85em; margin-bottom:8px; }
+      
+      .inner-list { font-family:var(--mono); font-size:0.85em; line-height:1.5; color:#475569; margin:0; padding:0; list-style:none; }
+      .inner-list li { margin-bottom:4px; }
+      
+      .h-arrow-v5 { display:flex; flex-direction:column; align-items:center; justify-content:center; color:#64748b; font-weight:600; font-size:0.85em; height:100%; }
+      .h-arrow-v5 .arr { font-size: 2em; color:#94a3b8; margin:0; line-height:1; }
+      
+      .v-arrow-v5 { display:flex; flex-direction:column; align-items:center; justify-content:center; color:#64748b; font-weight:600; font-size:0.85em; padding: 0; margin:-2px 0; }
+      .v-arrow-v5 .arr { font-size: 2em; line-height:0.8; color:#94a3b8; margin:0; }
+      
+      .step-list { text-align:left; list-style:none; padding:0; margin:0; font-size:0.9em; line-height:1.3; }
+      .step-list li { margin-bottom:2px; }
+      .step-list li span { color:#ea580c; font-weight:bold; width:14px; display:inline-block; }
+      
+      .db-box { border:2px solid #e2e8f0; border-radius:6px; padding:8px; font-size:0.85em; background:#f8fafc; font-weight:600; color:#334155; line-height:1.3; text-align:center; }
+      .db-box ul { list-style:none; padding:0; margin:0; margin-top:6px; font-weight:500; font-size:0.85em; text-align:center; }
+      .db-box ul li { margin-bottom:2px; }
+    </style>
+    
+    <div class="slide-head" style="margin-bottom:0">
+      <span class="kicker teal"><span class="num">06</span> How It Works & Architecture</span>
+      <h2 style="font-size:1.5em; margin:0;">Nova Architecture: <span class="accent">The 10-Second Funnel</span></h2>
+    </div>
+    
+    <div class="grow col" style="justify-content:center; align-items:center;">
+      <div class="arch-grid-v5">
+        
+        <!-- ================= ROW 1: TOP HORIZONTAL INGRESS PIPELINE ================= -->
+        
+        <!-- 1: Customer -->
+        <div class="box-v5" style="grid-column: 1; grid-row: 1; border-radius:30px; padding:8px 16px; background:#f8fafc; border-color:#94a3b8; align-self:center;">
+           <div style="font-size:1.1em; font-weight:800; color:#334155;"><span class="glyph">👤</span> CUSTOMER</div>
+        </div>
+        
+        <!-- 2: Arrow -->
+        <div class="h-arrow-v5" style="grid-column: 2; grid-row: 1;"><div class="arr">➔</div></div>
+        
+        <!-- 3: CDN -->
+        <div class="box-v5 box-deploy" style="grid-column: 3; grid-row: 1; align-self:center; padding:8px;">
+           <div style="color:#ea580c; font-weight:800; font-size:0.95em;">DEPLOYMENT: AWS<br>CloudFront + S3</div>
+           <div style="color:#c2410c; font-size:0.75em;">(Edge CDN)</div>
+        </div>
+        
+        <!-- 4: Arrow -->
+        <div class="h-arrow-v5" style="grid-column: 4; grid-row: 1;"><div class="arr">➔</div></div>
+        
+        <!-- 5: React SPA -->
+        <div class="box-v5 box-front" style="grid-column: 5; grid-row: 1;">
+           <div class="box-title" style="color:#2563eb;">React SPA</div>
+           <div class="box-sub">(Vite + TypeScript)</div>
+           <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:6px; padding:8px; margin-top:4px;">
+              <ul class="inner-list">
+                 <li>IntentBar</li>
+                 <li>CartProposalCard</li>
+                 <li>EmergencyChips</li>
+                 <li>SwipeCheckoutButton</li>
+                 <li style="font-weight:bold; color:#0369a1; margin-top:6px;">Tailwind - Mobile-First</li>
+              </ul>
+           </div>
+        </div>
+        
+        <!-- 6: REST API Arrow -->
+        <div class="h-arrow-v5" style="grid-column: 6; grid-row: 1;">
+           <div style="font-size:0.75em; text-align:center; line-height:1.1;">REST API<br>Requests</div>
+           <div class="arr">➔</div>
+        </div>
+        
+        <!-- 7: API Gateway -->
+        <div class="box-v5 box-deploy" style="grid-column: 7; grid-row: 1; display:flex; flex-direction:column; justify-content:center; align-self:stretch;">
+           <div style="color:#ea580c; font-weight:800; font-size:1.05em;">DEPLOYMENT: AWS<br>API Gateway + Lambda</div>
+           <div style="color:#c2410c; font-size:0.85em; margin-top:4px;">(Serverless Compute)</div>
+        </div>
+        
+        <!-- ================= ROW 2: ARROW DOWN FROM API GATEWAY ================= -->
+        <div class="v-arrow-v5" style="grid-column: 7; grid-row: 2;">
+           <div class="arr">↓</div>
+        </div>
+        
+        <!-- ================= ROW 3: EXPRESS BACKEND (Spans col 5 to 7) ================= -->
+        <div class="box-v5 box-back" style="grid-column: 5 / span 3; grid-row: 3; display:flex; flex-direction:column; padding:0; overflow:hidden;">
+           <div style="background:#fff7ed; padding:6px; border-bottom:1px solid #ffedd5;">
+              <div class="box-title" style="color:#ea580c; margin:0;">EXPRESS BACKEND API</div>
+              <div class="box-sub" style="margin:0;">(Node.js + TypeScript)</div>
+           </div>
+           
+           <div style="display:flex; padding:10px; gap:12px;">
+              <!-- Internal Services -->
+              <div style="flex:1.2; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:8px;">
+                 <div style="font-size:0.9em; color:#ea580c; font-weight:800; margin-bottom:6px;">Internal Services</div>
+                 <ul class="inner-list" style="font-weight:600; display:flex; flex-wrap:wrap; gap:6px; justify-content:center;">
+                    <li style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">catalog.ts</li>
+                    <li style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">dynamodb.ts</li>
+                    <li style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">bedrock.ts</li>
+                    <li style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">calendar.ts</li>
+                    <li style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">vectorSrch</li>
+                 </ul>
+              </div>
+              
+              <!-- Nova Agent Pipeline -->
+              <div style="flex:1; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:8px;">
+                 <div style="font-size:0.9em; color:#ea580c; font-weight:800; margin-bottom:6px;">NOVA AGENT Pipeline</div>
+                 <div style="display:flex; gap:10px;">
+                    <ul class="step-list" style="flex:1;">
+                       <li><span>1.</span> Parse Intent</li>
+                       <li><span>2.</span> Context</li>
+                       <li><span>3.</span> Decompose</li>
+                       <li><span>4.</span> Search</li>
+                    </ul>
+                    <ul class="step-list" style="flex:1;">
+                       <li><span style="color:#ea580c">5.</span> <strong style="color:#ea580c">Assemble</strong></li>
+                       <li><span>6.</span> Availability</li>
+                       <li><span>7.</span> Budget Limit</li>
+                       <li><span>8.</span> Explain</li>
+                    </ul>
+                 </div>
+              </div>
+           </div>
+        </div>
+        
+        <!-- ================= ROW 4: BRANCHING ARROWS ================= -->
+        <div style="grid-column: 5 / span 3; grid-row: 4; display:flex; width:100%; margin-top:2px;">
+           <div style="flex:1.2; display:flex; justify-content:center;">
+              <div class="v-arrow-v5"><div class="arr">↓</div></div>
+           </div>
+           <div style="flex:1; display:flex; justify-content:center;">
+              <div class="v-arrow-v5"><div class="arr">↓</div></div>
+           </div>
+        </div>
+        
+        <!-- ================= ROW 5: DATABASES ================= -->
+        <div style="grid-column: 1 / span 7; grid-row: 5; display:flex; width:100%; gap:8px;">
+           
+           <div class="db-box" style="border-color:#10b981; flex:1;">
+              <div style="color:#047857; font-weight:800;">DynamoDB</div>
+              <ul>
+                 <li>- Catalog (400+ SKUs)</li>
+                 <li>- Users (Learned Prefs)</li>
+                 <li>- Order History</li>
+              </ul>
+           </div>
+           
+           <div class="db-box" style="border-color:#a855f7; flex:1;">
+              <div style="color:#7e22ce; font-weight:800;">Google Calendar API</div>
+              <ul>
+                 <li>- OAuth 2.0 (HTTP-Only)</li>
+                 <li>- Events for Proactive Carts</li>
+              </ul>
+           </div>
+           
+           <div class="db-box" style="border-color:#64748b; flex:1; display:flex; flex-direction:column; justify-content:center;">
+              <div style="color:#334155; font-weight:800;">In-Memory Vector Store</div>
+              <div style="font-weight:500; margin-top:6px;">(Cosine Similarity)</div>
+           </div>
+           
+           <div class="db-box" style="border-color:#3b82f6; flex:1.2; display:flex; flex-direction:column; justify-content:center;">
+              <div style="color:#1d4ed8; font-weight:800; font-size:1.05em;">AWS Bedrock</div>
+              <ul style="margin-top:8px;">
+                 <li>- Nova Lite (Reasoning & Vision)</li>
+                 <li>- Titan Embed V2 (256-dim Vectors)</li>
+              </ul>
+           </div>
+           
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · TECH STACK & TRUST COMBINED -->
+  <section class="slide" data-section="stack">
+    <div class="slide-head">
+      <span class="kicker"><span class="num">07</span> Tech Stack & Trust</span>
+      <h2>AWS-native & <span class="accent">Secure by Design</span></h2>
+    </div>
+    <div class="grow two stagger" style="gap:12px;">
+      <div class="col" style="gap:10px;">
+        <div class="card soft" style="padding:14px;"><div class="ttl" style="font-size:1.05em;"><span class="glyph">⚛</span> React + Node (Lambda)</div><p class="mut">Type-safe UI, zero idle cost, auto-scale.</p></div>
+        <div class="card soft" style="padding:14px;"><div class="ttl" style="font-size:1.05em;"><span class="glyph">✦</span> Amazon Nova Lite & Titan</div><p class="mut">Amazon's frontier models. Fast, low cost, multimodal.</p></div>
+        <div class="card soft" style="padding:14px;"><div class="ttl" style="font-size:1.05em;"><span class="glyph">🗄</span> DynamoDB & Vector Search</div><p class="mut">Single-digit-ms reads. Precomputed embeddings.</p></div>
+      </div>
+      <div class="col" style="gap:10px;">
+        <div class="card soft" style="padding:14px;"><div class="ttl t-vio" style="font-size:1.05em;"><span class="glyph vio">🛡</span> Deterministic Guardrails</div><p class="mut">Money, stock & diet enforced strictly by code — never the model.</p></div>
+        <div class="card soft" style="padding:14px;"><div class="ttl t-teal" style="font-size:1.05em;"><span class="glyph teal">💡</span> Explainable Picks</div><p class="mut">Every single item ships with a plain-text reason & confidence score.</p></div>
+        <div class="card soft" style="padding:14px;"><div class="ttl t-vio" style="font-size:1.05em;"><span class="glyph vio">🔒</span> Privacy & Safety</div><p class="mut">Images not stored. PII protected. Temp 0.2 for stable outputs.</p></div>
+      </div>
+    </div>
+  </section>
+
+    <!-- 9 · LEADERSHIP PRINCIPLES -->
+  <section class="slide" data-section="lp">
+    <div class="slide-head">
+      <span class="kicker teal"><span class="num">08</span> Amazon Leadership Principles</span>
+      <h2>Built the Amazon way</h2>
+    </div>
+    <div class="grow col" style="justify-content:center;gap:1.5rem; position:relative; z-index:1;">
+      
+      <!-- The spokes -->
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; position:relative; z-index:2;">
+        <div class="card soft" style="padding:12px; text-align:center;"><div class="ttl" style="font-size:0.95em; justify-content:center;">★ Customer Obsession</div><p class="mut tiny" style="margin:0;">Removed decision tax.</p></div>
+        <div class="card soft" style="padding:12px; text-align:center;"><div class="ttl t-teal" style="font-size:0.95em; justify-content:center;">★ Invent & Simplify</div><p class="mut tiny" style="margin:0;">12 steps collapsed to 1.</p></div>
+        <div class="card soft" style="padding:12px; text-align:center;"><div class="ttl" style="font-size:0.95em; justify-content:center;">★ Frugality</div><p class="mut tiny" style="margin:0;">2–3 LLM calls.</p></div>
+        
+        <div class="card soft" style="padding:12px; text-align:center;"><div class="ttl t-teal" style="font-size:0.95em; justify-content:center;">★ Deliver Results</div><p class="mut tiny" style="margin:0;">Working prototype today.</p></div>
+        <div class="card soft" style="padding:12px; text-align:center;"><div class="ttl" style="font-size:0.95em; justify-content:center;">★ Dive Deep</div><p class="mut tiny" style="margin:0;">Measured 2.4s SLA.</p></div>
+        <div class="card soft" style="padding:12px; text-align:center;"><div class="ttl t-teal" style="font-size:0.95em; justify-content:center;">★ Earn Trust</div><p class="mut tiny" style="margin:0;">Deterministic guardrails.</p></div>
+      </div>
+      
+      <!-- Connecting lines (svg) -->
+      <svg style="position:absolute; top:45%; left:0; width:100%; height:25%; z-index:0; pointer-events:none;" preserveAspectRatio="none">
+         <path d="M 16% 0 C 16% 100, 50% 50, 50% 100" stroke="rgba(0,0,0,0.15)" stroke-width="2" fill="none" stroke-dasharray="4" />
+         <path d="M 50% 0 L 50% 100" stroke="rgba(0,0,0,0.15)" stroke-width="2" fill="none" stroke-dasharray="4" />
+         <path d="M 83% 0 C 83% 100, 50% 50, 50% 100" stroke="rgba(0,0,0,0.15)" stroke-width="2" fill="none" stroke-dasharray="4" />
+      </svg>
+
+      <!-- The hub -->
+      <div class="card glow stagger" style="text-align:center; padding:16px; margin:0 auto; width:60%; z-index:2; position:relative; background:#fff; border-width:2px;">
+        <div class="ttl" style="justify-content:center; font-size:1.2em; color:var(--orange-d);">★ Think Big</div>
+        <p class="mut" style="margin:0;">The conversational layer for Amazon's entire delivery network.</p>
+      </div>
+      
+    </div>
+  </section>
+
+    <!-- 10 · SCALABILITY -->
+  <section class="slide" data-section="scale">
+    <div class="slide-head">
+      <span class="kicker"><span class="num">09</span> Scalability</span>
+      <h2>A real production path — <span class="accent">built to scale</span></h2>
+    </div>
+    <div class="grow col" style="gap:1.5rem">
+      <div class="three stagger">
+        <div class="stat"><div class="n">0 → ∞</div><div class="l">Serverless auto-scaling</div></div>
+        <div class="stat"><div class="n teal">2–3</div><div class="l">Bounded LLM calls</div></div>
+        <div class="stat"><div class="n">→ ₹0</div><div class="l">Zero Idle cost</div></div>
+      </div>
+      <div class="two stagger" style="gap:12px; margin-top: 1rem">
+        <div class="col" style="gap:12px">
+          <!-- Flowchart Infographic -->
+          <div class="card soft" style="display:flex; flex-direction:column; justify-content:space-between; flex:1;">
+            <div class="ttl" style="font-size:1.1em;"><span class="glyph">∞</span> Scales with load</div>
+            <div style="display:flex; align-items:center; justify-content:space-around; background:#f9f9f9; padding:12px; border-radius:8px; border:1px dashed #ccc; font-family:var(--mono); font-size:0.7em; font-weight:700; color:var(--mut); margin:8px 0;">
+              <span style="background:#fff; padding:4px 8px; border-radius:4px; box-shadow:var(--shadow-sm);">API Gateway</span>
+              <span style="color:var(--orange-d);">→</span>
+              <span style="background:#fff; padding:4px 8px; border-radius:4px; box-shadow:var(--shadow-sm);">Lambda</span>
+              <span style="color:var(--orange-d);">→</span>
+              <span style="background:#fff; padding:4px 8px; border-radius:4px; box-shadow:var(--shadow-sm);">DynamoDB</span>
+            </div>
+            <p class="mut tiny" style="margin:0;">Serverless architecture handles traffic spikes perfectly.</p>
+          </div>
+          
+          <div class="card soft" style="flex:0 0 auto;">
+             <div class="ttl" style="font-size:1.1em;"><span class="glyph teal">▦</span> Search that grows</div>
+             <p class="mut small" style="margin:0;">Ready for OpenSearch Serverless as catalog expands seamlessly.</p>
+          </div>
+        </div>
+        <div class="col" style="gap:12px">
+          
+          <!-- Cost Graph Infographic -->
+          <div class="card soft" style="position:relative; overflow:hidden; flex:1;">
+            <div class="ttl" style="font-size:1.1em; position:relative; z-index:2;"><span class="glyph teal">₹</span> Predictable cost</div>
+            <p class="mut small" style="position:relative; z-index:2; margin:0;">Fixed LLM usage + cached routes = fully forecastable margins.</p>
+            <svg style="position:absolute; bottom:-10px; right:0; width:60%; height:80px; z-index:1; opacity:0.15;" viewBox="0 0 100 40" preserveAspectRatio="none">
+              <path d="M0 35 L20 35 L30 10 L40 35 L60 35 L70 5 L80 35 L100 35" stroke="var(--ink)" stroke-width="2" fill="none" stroke-dasharray="2" />
+              <path d="M0 35 L100 35" stroke="var(--teal-d)" stroke-width="4" fill="none" />
+              <text x="5" y="10" font-size="6" fill="var(--ink)" font-family="sans-serif">Traffic Spikes</text>
+              <text x="5" y="32" font-size="6" fill="var(--teal-d)" font-weight="bold" font-family="sans-serif">Flat Cost</text>
+            </svg>
+          </div>
+          
+          <div class="card soft" style="flex:0 0 auto;">
+             <div class="ttl" style="font-size:1.1em;"><span class="glyph">🔌</span> Catalog-agnostic</div>
+             <p class="mut small" style="margin:0;">Portable across Fresh, Pharmacy, and Grocery catalogs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · FUTURE VISIONS -->
+  <section class="slide" data-section="future">
+    <div class="slide-head">
+      <span class="kicker teal"><span class="num">10</span> Future Roadmap</span>
+      <h2>Where Now goes <span class="accent">next</span></h2>
+    </div>
+    <div class="grow center">
+      <div class="road stagger" style="width:100%">
+        <div class="mile now"><div class="dotm"></div><div class="when">NOW · SHIPPED</div><h3 style="font-size:1.2em;">Zero-Friction Carts</h3><p style="font-size:0.9em;">Conversational commerce · Instant 2.4s checkout</p></div>
+        <div class="mile"><div class="dotm"></div><div class="when">+90 DAYS</div><h3 style="font-size:1.2em;">Alexa Integration</h3><p style="font-size:0.9em;">Native smart home ordering · Cross-device continuity</p></div>
+        <div class="mile"><div class="dotm"></div><div class="when">Q1 2027</div><h3 style="font-size:1.2em;">Urgent Booking</h3><p style="font-size:0.9em; font-weight:600; color:var(--ink);">Ticket booking for Buses & Flights in urgency</p></div>
+        <div class="mile"><div class="dotm"></div><div class="when">2027+</div><h3 style="font-size:1.2em;">Invisible Shopping</h3><p style="font-size:0.9em;">Anticipates your needs · Never run out of essentials</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · CLOSING -->
+  <section class="slide" data-section="close">
+    <div class="title-bg" style="background-image:url('assets/shot-home.png');opacity:.08"></div>
+    <div class="title-wrap" style="position:relative;z-index:2;display:flex;flex-direction:column;height:100%;">
+      
+      <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+        <div><span class="kicker"><span class="num">11</span> Thank You</span></div>
+        <h1 style="margin:.3em 0; font-size:clamp(46px, 6vw, 84px);">Delivery is fast.<br><span class="grad-text">Now shopping is too.</span></h1>
+        
+        <div class="row stagger" style="margin-top:3rem;align-items:center;gap:36px;flex-wrap:wrap">
+          <div class="qr" style="width:160px; height:160px; flex:0 0 auto; box-shadow:var(--shadow-glow); border-color:rgba(255,153,0,0.3); padding:10px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%3A%2F%2Fd2aqm8yvsfct8d.cloudfront.net%2F" alt="Live Demo QR Code" style="width:100%; height:100%; display:block;" />
+          </div>
+          
+          <div class="card soft" style="flex:1; align-self:stretch; display:flex; flex-direction:column; justify-content:center; padding:24px 32px; background:rgba(255,255,255,0.7); backdrop-filter:blur(8px);">
+            <div class="ttl" style="font-size:1.4em; margin-bottom:0.2em;"><span class="glyph teal">✦</span> The Next Era of Commerce</div>
+            <p class="mut" style="font-size:1.1em; line-height:1.4; margin:0;">Pure conversational intent.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row" style="align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:12px; padding-top:1.5rem; border-top:1px solid rgba(0,0,0,0.06);">
+        <span class="mut small">HackOn with Amazon · S6.0 Grand Finale · Team CodeBlooded</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="rail" id="rail"></div>
+<div class="notes" id="notes"><h4>Presenter notes · <span id="nSlide">1</span></h4><div class="n-body" id="nBody"></div></div>
+<div id="overview"><div class="ov-head"><h2>All slides <span class="mut small">(click to jump · O to close)</span></h2><span class="chip">Esc / O to close</span></div><div class="grid" id="ovGrid"></div></div>
+<div id="help"><div class="box"><h3>Keyboard shortcuts</h3><div class="row"><kbd>→</kbd><kbd>Space</kbd><span>Next slide</span></div><div class="row"><kbd>←</kbd><span>Previous slide</span></div><div class="row"><kbd>F</kbd><span>Fullscreen</span></div><div class="row"><kbd>N</kbd><span>Toggle presenter notes</span></div><div class="row"><kbd>O</kbd><span>Slide overview grid</span></div><div class="row"><kbd>?</kbd><span>This help</span></div><div class="row"><kbd>Home</kbd><kbd>End</kbd><span>First / last slide</span></div><div class="row" style="border:none"><span class="mut tiny">Tip: click right/left half of screen to navigate.</span></div></div></div>
+
+<div class="dots" id="dots"></div>
+<div class="nav-hint"><span id="cur">1</span> / <span id="tot"></span></div>
+<div class="foot"><span class="brand"><span class="accent">Nova</span></span></div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsWrap = document.getElementById('dots');
+  const railWrap = document.getElementById('rail');
+  const prog = document.getElementById('prog');
+  const curEl = document.getElementById('cur');
+  const totEl = document.getElementById('tot');
+  const notesEl = document.getElementById('notes');
+  const nBody = document.getElementById('nBody');
+  const nSlide = document.getElementById('nSlide');
+  const overview = document.getElementById('overview');
+  const ovGrid = document.getElementById('ovGrid');
+  const help = document.getElementById('help');
+  if (totEl) totEl.textContent = slides.length;
+
+    const NOTES = [
+    "Open with the hook. 'Amazon Now delivers in 20 minutes — but building the cart takes 20. We close that gap.' Pause 2 seconds. Let the screenshot do the talking.",
+    "Tell the 8:30 AM story visually. Make them feel the clock. This is the 'Why' Jassy asks. Point to the abandonment stats.",
+    "Frame the shift: outcome-first, not search-first. The agent builds AND explains. Point at the visual flow.",
+    "13 features, all in the demo. Point at the tiers. Mention the accessibility win.",
+    "THIS is the finale-winning slide. Spend the most time here. Rehearse the live run. Video as fallback. Judges reward working demos above all else.",
+    "Lead with the hero stats. Business FOLLOWS from the customer. Cite the 3x frequency stat from Jassy's letter.",
+    "PROOF. Walk the pipeline and architecture. Show the new Application vs Bedrock layout. The LLM only parses & chooses — money/stock/diet are code.",
+    "Responsible AI & Tech Stack. This is Earn Trust. Deterministic guardrails mean the model can't spend money. AWS-native throughout.",
+    "HackOn rewards LP alignment. Show how each point directly aligns with the Amazon way. Point at the Think Big anchor.",
+    "Most important feasibility slide. Land: scales to zero, bounded LLM cost, OpenSearch path, multi-region. Feasible at Amazon scale.",
+    "Four milestones. Emphasize urgent ticket booking for buses & flights to show versatility beyond groceries.",
+    "Restate vision. Make the ASK specific. Point at the QR + links. Hold during Q&A."
+  ];
+
+  let i = 0; let notesOn = false;
+
+  slides.forEach((s, n) => {
+    const b = document.createElement('button');
+    b.className = 'dot' + (n === 0 ? ' on' : '');
+    b.setAttribute('aria-label', 'Go to slide ' + (n + 1));
+    b.onclick = (e) => { e.stopPropagation(); go(n); };
+    dotsWrap.appendChild(b);
+    const r = document.createElement('i');
+    if (n === 0) r.classList.add('on');
+    railWrap.appendChild(r);
+  });
+  const dots = Array.from(dotsWrap.children);
+  const rails = Array.from(railWrap.children);
+
+  slides.forEach((s, n) => {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.innerHTML = '<div class="ci">' + String(n+1).padStart(2,'0') + ' · ' + (s.dataset.section||'') + '</div><div class="ct">' + (s.querySelector('h2,h1')?.textContent || 'Slide').replace(/\s+/g,' ').trim().slice(0,60) + '</div><div class="cd">' + (s.querySelector('.lead,.kicker')?.textContent || '').replace(/\s+/g,' ').trim().slice(0,90) + '</div>';
+    cell.onclick = () => { go(n); toggleOverview(false); };
+    ovGrid.appendChild(cell);
+  });
+
+  function go(n) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    slides[i].classList.remove('active');
+    dots[i].classList.remove('on');
+    rails[i] && rails[i].classList.remove('on');
+    i = n;
+    slides[i].classList.add('active');
+    dots[i].classList.add('on');
+    rails[i] && rails[i].classList.add('on');
+    if (curEl) curEl.textContent = i + 1;
+    prog.style.width = (i / (slides.length - 1) * 100) + '%';
+    nSlide.textContent = i + 1;
+    nBody.innerHTML = NOTES[i] || '';
+    if (notesOn) notesEl.classList.add('show'); else notesEl.classList.remove('show');
+  }
+  const next = () => go(i + 1);
+  const prev = () => go(i - 1);
+  function toggleNotes(force){ notesOn = (force !== undefined) ? force : !notesOn; notesEl.classList.toggle('show', notesOn); if (notesOn) nBody.innerHTML = NOTES[i] || ''; }
+  function toggleOverview(force){ const show = (force !== undefined) ? force : !overview.classList.contains('show'); overview.classList.toggle('show', show); }
+  function toggleHelp(force){ const show = (force !== undefined) ? force : !help.classList.contains('show'); help.classList.toggle('show', show); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { toggleOverview(false); toggleHelp(false); return; }
+    if (['ArrowRight','PageDown',' '].includes(e.key)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft','PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(slides.length - 1);
+    else if (e.key === 'f' || e.key === 'F') { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+    else if (e.key === 'n' || e.key === 'N') toggleNotes();
+    else if (e.key === 'o' || e.key === 'O') toggleOverview();
+    else if (e.key === '?') toggleHelp();
+  });
+  document.getElementById('deck').addEventListener('click', e => {
+    if (e.target.closest('.dot, a, button, .shot, pre')) return;
+    (e.clientX > window.innerWidth / 2) ? next() : prev();
+  });
+  let tx = 0;
+  addEventListener('touchstart', e => tx = e.changedTouches[0].clientX, {passive:true});
+  addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) (dx < 0 ? next() : prev()); }, {passive:true});
+  prog.style.width = '0%';
+  nBody.innerHTML = NOTES[0] || '';
+</script>
+</body>
+</html>
