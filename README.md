@@ -1,6 +1,4 @@
 <div align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" width="200"/>
-  <h1>Amazon Now</h1>
   <p><strong>Delivery is fast. Now, shopping is too.</strong></p>
   <p><i>An AI-powered conversational commerce layer built for HackOn with Amazon — Season 6.0</i></p>
 
@@ -128,6 +126,3 @@ cd ../frontend && npm run dev  # Runs frontend on port 5173
 *From need to done, in seconds — for millions.*
 
 ---
-<div align="center">
-  <i>Made with ❤️ for HackOn with Amazon — Season 6.0</i>
-</div>
